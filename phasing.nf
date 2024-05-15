@@ -36,6 +36,8 @@ Channel
 // phase common variants
 process phase_common {
     
+    errorStrategy 'ignore'
+
     input:
     path (unphased_vcf)
     each window
