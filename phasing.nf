@@ -51,9 +51,19 @@ process phase_common {
     WINDOW=${window}
     echo "This is \${WINDOW} on \${WINDOW%:*}"
     MAP="${params.map_path}/\${WINDOW%:*}.map"
-    echo \${MAP}
-    
-    SHAPEIT5_phase_common --input ${unphased_vcf} --region ${window} --map \${MAP} --output ${window}_phased.bcf --thread 12
+
+    if [[ -f \${MAP} ]]; then
+
+        echo "\$MAP is present"
+        SHAPEIT5_phase_common --input ${unphased_vcf} --region ${window} --map \${MAP} --output ${window}_phased.bcf --thread 12
+
+    else
+
+        echo "\$MAP is not present"
+        SHAPEIT5_phase_common --input ${unphased_vcf} --region ${window} --output ${window}_phased.bcf --thread 12
+
+    fi
+
     """
 }
 
