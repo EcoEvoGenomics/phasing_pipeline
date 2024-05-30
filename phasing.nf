@@ -37,6 +37,7 @@ Channel
 process phase_common {
     
     errorStrategy 'ignore'
+    publishDir 'vcf_phase_window', saveAs: { filename -> "$filename" }
 
     input:
     path (unphased_vcf)
@@ -104,5 +105,5 @@ workflow{
         return tuple(key, file)
       }
     | groupTuple( by:0,sort:true ) \
-    | ligate_chr | view
+    | collect | ligate_chr | view
 }
