@@ -28,3 +28,4 @@ cd /cluster/work/users/msravine/phasing_pipeline
 
 # run nextflow pipeline
 nextflow run phasing.nf --windows sparrow_genome_windows_test.list
+nextflow run ligate.nf
