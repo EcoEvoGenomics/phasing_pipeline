@@ -5,13 +5,13 @@
 
 ## Introduction
 
-Welcome to the readme and userguide for the Evolutionary and Ecological Genetics Group **statistical phasing pipeline**. This is a simple nextflow workflow management script that will quickly and efficiently phase variants across genome windows and then concatenate these windows into full phased, per chromosome vcfa, 
+Welcome to the readme and userguide for the Evolutionary and Ecological Genetics Group **statistical phasing pipeline**. This is a simple nextflow workflow management script that will quickly and efficiently phase variants across genome windows. A second script will then concatenate these windows into full phased, per chromosome vcfa, 
 
 As with our [variant calling pipeline](https://github.com/markravinet/genotyping_pipeline), the scripts are designed to be used with minimal. The idea is once again to simplify the process of the busy work of population genomics to allow end-users to focus more on the interesting analyses a phased dataset might provide - i.e. haplotype based selective sweep statistics or ancestry analyses.
 
 That does not mean this pipeline should be used as a [black box](https://en.wikipedia.org/wiki/Black_box). It is well worth learning a bit about [how statistical phasing works](https://en.wikipedia.org/wiki/Haplotype_estimation) and the way [you might run it *without* this pipeline](https://speciationgenomics.github.io/phasing/).
 
-The pipeline operates with a single script - `phasing.nf`. It is based on [shapeit5](https://odelaneau.github.io/shapeit5/) a fast, [accurate and efficient phasing program for large datasets](https://www.nature.com/articles/s41588-023-01415-w). This readme also includes an example script (`run_phasing_pipeline_saga.slurm`) for running the pipeline on the Sigma2 Saga supercomputer in Norway. 
+The pipeline operates with two scripts - `phasing.nf` and `ligate.nf`. These are based on [shapeit5](https://odelaneau.github.io/shapeit5/) a fast, [accurate and efficient phasing program for large datasets](https://www.nature.com/articles/s41588-023-01415-w). This readme also includes an example script (`run_phasing_pipeline_saga.slurm`) for running the pipeline on the Sigma2 Saga supercomputer in Norway. 
 
 **NB The pipeline is designed to work alongside our [variant calling pipeline](https://github.com/markravinet/genotyping_pipeline)**. However, in principle it should work with out issue with any variant set called by other means. If you have installed and ran the variant calling pipeline, you can skip the majority of these installation instructions with the exception of **`configuring the conda environment`**
 
@@ -63,7 +63,7 @@ This will create a `mamba`/`conda` environment called `phase` that contains all 
 
 ## Running the pipeline
 
-The pipeline is quite simple. First it performs statistical phasing in windows across the genome. To do this, it needs a configuration of windows that it should split the genome into (see below) - I typically use 10Mb windows. Next, it takes these genome windows and then ligates them together into single per chromsome vcfs.
+The pipeline is quite simple. First it performs statistical phasing in windows across the genome. To do this, it needs a configuration of windows that it should split the genome into (see below) - I typically use 10Mb windows.
 
 The pipeline is very simple to run. You should set it up to run in a single working directory. You then run it like so:
 
@@ -78,6 +78,15 @@ The script takes three simple arguments that you have to provide:
 `--map_path` - a path to a directory of recombination maps for the genome, with one file per chromosome you are running the pipeline on.
 
 All of these options are necessary for the script to run. However, if you are running the script on `saga` and you are using it on the house sparrow genome, you can ommit the `--map_path` argument as this is coded in (see below for more info on map files). 
+
+The `phasing.nf` script will output the phased windows in a directory called `vcf_phase_window`
+After this you can use the `ligate.nf` script to combine these into single per chromsome vcfs. This is very simple to do:
+
+```
+nextflow run ligate.nf
+```
+
+The script needs no other options and will look for all the phased output in `vcf_phase_window` in order to run.
 
 ### Genome windows
 
